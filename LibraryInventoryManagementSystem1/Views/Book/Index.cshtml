@@ -1,0 +1,146 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.Book>?
+
+@{
+    ViewData["Title"] = "Total Books & Details";
+    Layout = "_AdminLayout";
+
+    var books = Model ?? new List<LibraryInventoryManagementSystem1.Models.Book>();
+    var searchValue = Context.Request.Query["search"].ToString();
+    var totalBooks = ViewBag.TotalBooks ?? books.Count;
+}
+
+<div>
+
+    <!-- =====================================
+         SUCCESS MESSAGE
+         ===================================== -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm" role="alert">
+            <span>✅</span>
+            <div>@TempData["SuccessMessage"]</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- =====================================
+         PAGE HEADER
+         ===================================== -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h2 class="fw-bold mb-1">Total Books &amp; Details</h2>
+                <p class="text-muted mb-0">View, search, edit, and manage all books in the library.</p>
+            </div>
+
+            <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle fs-6 fw-semibold px-3 py-2 align-self-start">
+                @totalBooks @(totalBooks == 1 ? "Book" : "Books") Total
+            </span>
+        </div>
+    </div>
+
+    <!-- =====================================
+         SEARCH & ADD BOOK
+         ===================================== -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <form method="get" asp-action="Index" class="row g-2 align-items-center">
+                <div class="col-12 col-md">
+                    <input type="text"
+                           name="search"
+                           class="form-control"
+                           placeholder="Search by title, author, category, or ID..."
+                           value="@searchValue" />
+                </div>
+                <div class="col-6 col-md-auto">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <a asp-action="Add" class="btn btn-dark w-100">+ Add New Book</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================
+         BOOK TABLE
+         ===================================== -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-1 py-3">
+            <h3 class="h6 fw-bold mb-0">Library Book Inventory</h3>
+            <span class="text-muted small">@books.Count @(books.Count == 1 ? "record" : "records")</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center">Book ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th class="text-center">Total Qty</th>
+                        <th class="text-center">Available</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (books.Count > 0)
+                    {
+                        foreach (var book in books)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border">#@book.BookId</span>
+                                </td>
+
+                                <td class="fw-semibold text-dark">
+                                    @(book.Title ?? "N/A")
+                                </td>
+
+                                <td class="text-secondary">
+                                    @(book.Author ?? "N/A")
+                                </td>
+
+                                <td>
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis border border-primary-subtle fw-semibold text-capitalize">
+                                        @(book.Category ?? "Uncategorized")
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-light text-dark border">@book.TotalQty</span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-success-subtle text-success-emphasis border border-success-subtle">@book.AvailableQty</span>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@book.BookId" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@book.BookId" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <span class="d-block fs-1 mb-2">📚</span>
+                                <strong class="d-block text-dark mb-1">No books found</strong>
+                                <span class="small">Try searching with a different title, author, category, or book ID.</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>

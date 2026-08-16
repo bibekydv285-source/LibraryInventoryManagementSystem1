@@ -1,0 +1,209 @@
+﻿@using LibraryInventoryManagementSystem1.Dto
+@using LibraryInventoryManagementSystem1.Models
+@model StudentDto
+@{
+    ViewData["Title"] = "New Students Registration";
+    Layout = "_Layout";
+}
+
+<style>
+    /* Theme tokens layered on top of Bootstrap's own CSS variables,
+           so every Bootstrap component (btn, card, badge, alert, form-control)
+           inherits the palette instead of being fought with overrides. */
+    .reg-scope {
+        --bs-primary: #16233A;
+        --bs-primary-rgb: 22, 35, 58;
+        --bs-body-color: #16233A;
+        --bs-border-color: #B9CADB;
+        --bs-border-radius: .4rem;
+        --bs-border-radius-lg: .5rem;
+        --bs-body-bg: #DCE6F0;
+        --brass: #B8862B;
+        --brass-dark: #8C6620;
+        /* ADD THIS LINE — replaces the flat page background with a subtle blue gradient */
+        background: linear-gradient(180deg, #EAF1F8 0%, #DCE6F0 100%);
+    }
+
+        .reg-scope .card {
+            background-color: #F7FAFD;
+            border-style: dashed;
+        }
+
+        .reg-scope .form-label {
+            font-weight: 600;
+            font-size: .8125rem;
+        }
+
+            .reg-scope .form-label.required::after {
+                content: " *";
+                color: #7A2E2E;
+            }
+
+        .reg-scope .form-control,
+        .reg-scope .form-select {
+            background-color: #DCE6F0;
+            border-color: transparent;
+        }
+
+            .reg-scope .form-control:focus,
+            .reg-scope .form-select:focus {
+                background-color: #fff;
+                border-color: var(--brass);
+                box-shadow: 0 0 0 .2rem rgba(184, 134, 43, .15);
+            }
+
+        .reg-scope .btn-brand {
+            --bs-btn-color: #F7FAFD;
+            --bs-btn-bg: #16233A;
+            --bs-btn-border-color: #16233A;
+            --bs-btn-hover-bg: var(--brass-dark);
+            --bs-btn-hover-border-color: var(--brass-dark);
+            --bs-btn-hover-color: #F7FAFD;
+            font-weight: 700;
+        }
+
+        .reg-scope .badge-stamp {
+            background: transparent;
+            border: 2px solid var(--brass);
+            color: var(--brass-dark);
+            font-family: "Courier New", Courier, monospace;
+            letter-spacing: 1px;
+            transform: rotate(-4deg);
+        }
+
+        .reg-scope .card-title {
+            font-family: Georgia, "Source Serif Pro", serif;
+        }
+</style>
+
+<div class="reg-scope py-4">
+    <div class="container" style="max-width: 780px;">
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
+                    <div>
+                        <h3 class="card-title fw-bold mb-1">New Students Registration</h3>
+                        <p class="text-secondary small mb-0" style="max-width: 380px;">
+                            Fill in every field below. Your student ID and login are generated automatically once you submit.
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge badge-stamp rounded-1 px-2 py-1 text-uppercase">Student ID</span>
+                        <div class="text-secondary small mt-1">Stamped on submit</div>
+                    </div>
+                </div>
+
+                @if (ViewBag.SuccessMessage != null && ViewBag.RegisteredStudent != null)
+                {
+                    var s = (Student)ViewBag.RegisteredStudent;
+                    <div class="alert border border-dashed mb-4" style="background-color:#E7F0F1; border-color:#3E6B72 !important;">
+                        <h4 class="fw-bold mb-1" style="color:#3E6B72;">@ViewBag.SuccessMessage</h4>
+                        <p class="mb-2 small" style="color:#3E6B72;">The following student has been registered.</p>
+                        <span class="badge badge-stamp rounded-1 px-2 py-1">Student ID: @s.StudentCode</span>
+
+                        <div class="row row-cols-2 g-3 mt-2">
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Full name</div>
+                                <div class="fw-medium">@s.Name</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Email address</div>
+                                <div class="fw-medium">@s.Email</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Phone number</div>
+                                <div class="fw-medium">@s.PhoneNumber</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Date of birth</div>
+                                <div class="fw-medium">@s.DateOfBirth.ToString("dd MMM yyyy")</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Gender</div>
+                                <div class="fw-medium">@s.Gender</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Username</div>
+                                <div class="fw-medium">@s.Username</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-uppercase text-secondary small fw-semibold">Age</div>
+                                <div class="fw-medium">@s.Age</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="text-uppercase text-secondary small fw-semibold">Address</div>
+                                <div class="fw-medium">@s.Address</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                }
+
+                <form asp-action="Add" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label required">Full name</label>
+                            <input type="text" class="form-control" name="Name" placeholder="Enter your full name" value="@Model?.Name">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Email address</label>
+                            <input type="email" class="form-control" name="Email" placeholder="Enter your email address" value="@Model?.Email">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Phone number</label>
+                            <input type="text" class="form-control" name="PhoneNumber" placeholder="Enter your phone number" value="@Model?.PhoneNumber">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Date of birth</label>
+                            <input type="date" class="form-control" name="DateOfBirth" value="@Model?.DateOfBirth.ToString("yyyy-MM-dd")">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Gender</label>
+                            <select class="form-select" name="Gender">
+                                <option value="">Select one</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Username</label>
+                            <input type="text" class="form-control" name="Username" placeholder="Choose a username" value="@Model?.Username">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Age</label>
+                            <input type="number" class="form-control" name="Age" placeholder="e.g. 20" min="1" max="100" value="@Model?.Age">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Address</label>
+                            <textarea class="form-control" name="Address" rows="2" placeholder="Street, city, province">@Model?.Address</textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Password</label>
+                            <input type="password" class="form-control" name="Password" placeholder="At least 6 characters" autocomplete="new-password">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Confirm password</label>
+                            <input type="password" class="form-control" name="ConfirmPassword" placeholder="Re-enter password" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-secondary small mb-0" style="max-width: 260px;">By submitting, your student ID and account are created instantly.</p>
+                        <button type="submit" class="btn btn-brand rounded-2 px-4 py-2">Create my account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

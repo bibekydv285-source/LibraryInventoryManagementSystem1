@@ -1,0 +1,54 @@
+﻿@using LibraryInventoryManagementSystem1.Dto
+@model StudentDto
+@{
+    ViewData["Title"] = "Edit Student";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <h3>Edit Student</h3>
+    <form asp-action="Edit" asp-route-id="@ViewBag.StudentId" method="post">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" name="Name" value="@Model.Name">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="Email" value="@Model.Email">
+        </div>
+       
+        <div class="mb-3">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-control" name="Age" value="@Model.Age">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="text" class="form-control" name="PhoneNumber" value="@Model.PhoneNumber">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" name="DateOfBirth" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select class="form-control" name="Gender">
+                <option value="">Select one</option>
+                <option value="Male" selected="@(Model.Gender == "Male")">Male</option>
+                <option value="Female" selected="@(Model.Gender == "Female")">Female</option>
+                <option value="Other" selected="@(Model.Gender == "Other")">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="Username" value="@Model.Username">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" name="Address">@Model.Address</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

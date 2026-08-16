@@ -1,0 +1,45 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.Fine>
+
+@{
+    ViewData["Title"] = "Fine History";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Fine History</h2>
+</div>
+
+<a href="@Url.Action("Index")" style="display:inline-block; margin-bottom:15px;">Back to Pending Fines</a>
+
+<table class="table" style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th>Fine Id</th>
+            <th>Book</th>
+            <th>Student</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Payment Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var fine in Model)
+            {
+                <tr>
+                    <td>@fine.FineId</td>
+                    <td>@(fine.BookIssue?.Book?.Title ?? "N/A")</td>
+                    <td>@(fine.BookIssue?.Student?.Name ?? "N/A")</td>
+                    <td>@fine.Amount.ToString("C")</td>
+                    <td>@fine.PaymentStatus</td>
+                    <td>@(fine.PaymentDate.HasValue ? fine.PaymentDate.Value.ToString("dd-MMM-yyyy") : "-")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6">No fine records.</td></tr>
+        }
+    </tbody>
+</table>

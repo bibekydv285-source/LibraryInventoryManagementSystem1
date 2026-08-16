@@ -1,0 +1,560 @@
+﻿@using LibraryInventoryManagementSystem1.Models
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+
+    int totalStudents = Convert.ToInt32(ViewBag.TotalStudents ?? 0);
+    int totalBooks = Convert.ToInt32(ViewBag.TotalBooks ?? 0);
+    int availableBooks = Convert.ToInt32(ViewBag.AvailableBooks ?? 0);
+    int issuedBooks = Convert.ToInt32(ViewBag.IssuedBooks ?? 0);
+    int totalLibrarians = Convert.ToInt32(ViewBag.TotalLibrarians ?? 0);
+    int pendingBooks = Convert.ToInt32(ViewBag.PendingBooks ?? 0);
+
+    var recentActivities = ViewBag.RecentActivities as List<BookIssue>;
+}
+
+<style>
+    .library-dashboard {
+        --primary: #18755b;
+        --primary-dark: #105641;
+        --navy: #1d2b2a;
+        --muted: #6c7873;
+        --border: #e2e9e4;
+        --soft-bg: #f6f8f4;
+        color: #263532;
+    }
+
+        .library-dashboard .eyebrow {
+            color: var(--primary);
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+
+        .library-dashboard .page-title {
+            color: var(--navy);
+            font-size: clamp(1.7rem, 3vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -.04em;
+        }
+
+        .library-dashboard .page-subtitle {
+            color: var(--muted);
+        }
+
+        .library-dashboard .add-book-btn {
+            background: var(--primary);
+            border: 0;
+            border-radius: .75rem;
+            box-shadow: 0 .55rem 1.25rem rgba(24, 117, 91, .22);
+            font-weight: 700;
+            padding: .75rem 1.15rem;
+            transition: .2s ease;
+        }
+
+            .library-dashboard .add-book-btn:hover {
+                background: var(--primary-dark);
+                box-shadow: 0 .75rem 1.5rem rgba(24, 117, 91, .3);
+                transform: translateY(-2px);
+            }
+
+        .library-dashboard .stat-card,
+        .library-dashboard .panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 .35rem 1.2rem rgba(30, 45, 38, .05);
+        }
+
+        .library-dashboard .stat-card {
+            color: inherit;
+            display: block;
+            height: 100%;
+            overflow: hidden;
+            padding: 1.1rem;
+            position: relative;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+            .library-dashboard .stat-card::after {
+                background: var(--accent);
+                bottom: 0;
+                content: "";
+                height: 3px;
+                left: 0;
+                opacity: 0;
+                position: absolute;
+                right: 0;
+                transition: opacity .2s ease;
+            }
+
+            .library-dashboard .stat-card:hover {
+                box-shadow: 0 .9rem 1.8rem rgba(30, 45, 38, .11);
+                transform: translateY(-4px);
+            }
+
+                .library-dashboard .stat-card:hover::after {
+                    opacity: 1;
+                }
+
+        .library-dashboard .stat-icon {
+            align-items: center;
+            background: var(--icon-bg);
+            border-radius: .85rem;
+            color: var(--icon-color);
+            display: inline-flex;
+            flex: 0 0 48px;
+            font-size: 1.25rem;
+            height: 48px;
+            justify-content: center;
+            width: 48px;
+        }
+
+        .library-dashboard .stat-label {
+            color: var(--muted);
+            font-size: .78rem;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .library-dashboard .stat-number {
+            color: var(--navy);
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -.04em;
+            line-height: 1.1;
+            margin-top: .3rem;
+        }
+
+        .library-dashboard .panel-header {
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 1.35rem;
+        }
+
+        .library-dashboard .panel-title {
+            color: var(--navy);
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .library-dashboard .panel-subtitle {
+            color: var(--muted);
+            font-size: .82rem;
+            margin: .25rem 0 0;
+        }
+
+        .library-dashboard .action-link {
+            color: var(--primary);
+            font-size: .84rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+            .library-dashboard .action-link:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+        .library-dashboard .empty-state {
+            padding: 3.5rem 1.5rem;
+            text-align: center;
+        }
+
+        .library-dashboard .empty-icon {
+            align-items: center;
+            background: #e8f4ed;
+            border-radius: 50%;
+            color: var(--primary);
+            display: inline-flex;
+            font-size: 1.65rem;
+            height: 68px;
+            justify-content: center;
+            margin-bottom: 1rem;
+            width: 68px;
+        }
+
+        .library-dashboard .empty-title {
+            color: var(--navy);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .library-dashboard .library-banner {
+            background: radial-gradient(circle at 90% 20%, rgba(255, 224, 151, .28), transparent 25%), linear-gradient(135deg, #173c35 0%, #18755b 60%, #3b9b77 100%);
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: 0 .8rem 1.8rem rgba(20, 82, 62, .22);
+            color: #fff;
+            min-height: 195px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .library-dashboard .library-banner::before {
+                border: 1px solid rgba(255,255,255,.15);
+                border-radius: 50%;
+                content: "";
+                height: 235px;
+                position: absolute;
+                right: -75px;
+                top: -125px;
+                width: 235px;
+            }
+
+        .library-dashboard .banner-content {
+            padding: 1.55rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .library-dashboard .banner-eyebrow {
+            color: #d4eadc;
+            font-size: .68rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .library-dashboard .banner-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -.025em;
+            line-height: 1.25;
+            max-width: 270px;
+        }
+
+        .library-dashboard .banner-icon {
+            bottom: 1rem;
+            font-size: 4rem;
+            opacity: .9;
+            position: absolute;
+            right: 1.2rem;
+            transform: rotate(-8deg);
+        }
+
+        .library-dashboard .quick-action {
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: .75rem;
+            color: #354541;
+            display: flex;
+            font-size: .86rem;
+            font-weight: 700;
+            gap: .7rem;
+            min-height: 57px;
+            padding: .7rem .8rem;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+            .library-dashboard .quick-action:hover {
+                background: #f0f8f3;
+                border-color: #afd7bf;
+                color: var(--primary-dark);
+                transform: translateY(-2px);
+            }
+
+        .library-dashboard .quick-icon {
+            align-items: center;
+            background: #e8f4ed;
+            border-radius: .55rem;
+            color: var(--primary);
+            display: inline-flex;
+            font-size: 1rem;
+            height: 34px;
+            justify-content: center;
+            width: 34px;
+        }
+
+        /* Recent activity list */
+        .library-dashboard .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .library-dashboard .activity-item {
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: .9rem;
+            padding: 1rem 1.35rem;
+            transition: background .15s ease;
+        }
+
+            .library-dashboard .activity-item:last-child {
+                border-bottom: 0;
+            }
+
+            .library-dashboard .activity-item:hover {
+                background: var(--soft-bg);
+            }
+
+        .library-dashboard .activity-icon {
+            align-items: center;
+            border-radius: .7rem;
+            display: inline-flex;
+            flex: 0 0 42px;
+            font-size: 1.1rem;
+            height: 42px;
+            justify-content: center;
+            width: 42px;
+        }
+
+            .library-dashboard .activity-icon.returned {
+                background: #e6f7ee;
+                color: #1a9f5c;
+            }
+
+            .library-dashboard .activity-icon.overdue {
+                background: #fdeceb;
+                color: #d64545;
+            }
+
+            .library-dashboard .activity-icon.issued {
+                background: #fff5df;
+                color: #b77a12;
+            }
+
+        .library-dashboard .activity-main {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .library-dashboard .activity-title {
+            color: var(--navy);
+            font-size: .88rem;
+            font-weight: 700;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .library-dashboard .activity-sub {
+            color: var(--muted);
+            font-size: .78rem;
+            margin: .15rem 0 0;
+        }
+
+        .library-dashboard .activity-badge {
+            border-radius: .5rem;
+            flex-shrink: 0;
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+            padding: .3rem .6rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+            .library-dashboard .activity-badge.returned {
+                background: #e6f7ee;
+                color: #1a9f5c;
+            }
+
+            .library-dashboard .activity-badge.overdue {
+                background: #fdeceb;
+                color: #d64545;
+            }
+
+            .library-dashboard .activity-badge.issued {
+                background: #fff5df;
+                color: #b77a12;
+            }
+
+        .library-dashboard .activity-time {
+            color: #9ca3af;
+            flex-shrink: 0;
+            font-size: .74rem;
+            text-align: right;
+            width: 78px;
+        }
+
+    @@media (max-width: 575.98px) {
+        .library-dashboard .add-book-btn {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .library-dashboard .stat-card {
+            padding: .9rem;
+        }
+
+        .library-dashboard .stat-icon {
+            flex-basis: 42px;
+            height: 42px;
+            width: 42px;
+        }
+
+        .library-dashboard .stat-number {
+            font-size: 1.4rem;
+        }
+
+        .library-dashboard .activity-time {
+            display: none;
+        }
+    }
+</style>
+
+<div class="library-dashboard pb-3">
+    <section class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+            <div class="eyebrow mb-2">Library management</div>
+            <h1 class="page-title mb-2">Welcome back, Admin <span aria-hidden="true">👋</span></h1>
+            <p class="page-subtitle mb-0">Here is a clear overview of your library today.</p>
+        </div>
+
+        <a asp-controller="Book" asp-action="Add" class="btn btn-success add-book-btn d-inline-flex align-items-center gap-2">
+            <span class="fs-5 lh-1" aria-hidden="true">＋</span>
+            Add New Book
+        </a>
+    </section>
+
+    <section class="row g-3 mb-4" aria-label="Library overview">
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="Book" asp-action="Index" class="stat-card" style="--accent:#18755b; --icon-bg:#e8f4ed; --icon-color:#18755b;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">📚</span>
+                    <div><div class="stat-label">Total Books</div><div class="stat-number">@totalBooks</div></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="Book" asp-action="Available" class="stat-card" style="--accent:#319a63; --icon-bg:#ebf8ee; --icon-color:#23854f;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">✓</span>
+                    <div><div class="stat-label">Available Books</div><div class="stat-number">@availableBooks</div></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="BookIssue" asp-action="Index" class="stat-card" style="--accent:#d89a27; --icon-bg:#fff5df; --icon-color:#b77a12;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">↗</span>
+                    <div><div class="stat-label">Issued Books</div><div class="stat-number">@issuedBooks</div></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="Student" asp-action="Index" class="stat-card" style="--accent:#417d8a; --icon-bg:#eaf5f7; --icon-color:#2d6875;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">🎓</span>
+                    <div><div class="stat-label">Total Students</div><div class="stat-number">@totalStudents</div></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="Librarian" asp-action="Index" class="stat-card" style="--accent:#9b6b45; --icon-bg:#f9f0e9; --icon-color:#805534;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">👥</span>
+                    <div><div class="stat-label">Librarians</div><div class="stat-number">@totalLibrarians</div></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <a asp-controller="Fine" asp-action="Index" class="stat-card" style="--accent:#c45252; --icon-bg:#fdf0f0; --icon-color:#aa3e3e;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon">⏳</span>
+                    <div><div class="stat-label">Pending Fines</div><div class="stat-number">@pendingBooks</div></div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section class="row g-4">
+        <div class="col-12 col-lg-7">
+            <div class="panel h-100">
+                <div class="panel-header d-flex align-items-center justify-content-between gap-3">
+                    <div>
+                        <h2 class="panel-title">Recent Activity</h2>
+                        <p class="panel-subtitle">Latest book issues and returns.</p>
+                    </div>
+                    <a asp-controller="BookIssue" asp-action="Recent" class="action-link text-nowrap">View all →</a>
+                </div>
+
+                @if (recentActivities != null && recentActivities.Any())
+                {
+                    <div class="activity-list">
+                        @foreach (var activity in recentActivities.Take(8))
+                        {
+                            bool isReturned = activity.Status == "Returned";
+                            bool isOverdue = !isReturned && activity.DueDate < DateTime.Now;
+                            string state = isReturned ? "returned" : (isOverdue ? "overdue" : "issued");
+                            string icon = isReturned ? "↩" : (isOverdue ? "⚠" : "↗");
+                            string label = isReturned ? "Returned" : (isOverdue ? "Overdue" : "Issued");
+                            var activityDate = isReturned && activity.ReturnDate.HasValue ? activity.ReturnDate.Value : activity.IssueDate;
+
+                            <div class="activity-item">
+                                <span class="activity-icon @state">@icon</span>
+                                <div class="activity-main">
+                                    <p class="activity-title">@(activity.Book?.Title ?? "Unknown Book")</p>
+                                    <p class="activity-sub">@(activity.Student?.Name ?? "Unknown Student") &middot; @(isReturned ? "Returned" : "Issued") on @activityDate.ToString("MMM dd, yyyy")</p>
+                                </div>
+                                <span class="activity-badge @state">@label</span>
+                                <span class="activity-time">@activityDate.ToString("hh:mm tt")</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-icon">📖</div>
+                        <h3 class="empty-title mb-2">No recent activity yet</h3>
+                        <p class="text-muted small mx-auto mb-3" style="max-width:330px;">When books are issued or returned, their activity will appear here.</p>
+                        <a asp-controller="BookIssue" asp-action="Index" class="action-link">Manage issued books →</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="d-flex flex-column gap-4 h-100">
+                <div class="library-banner">
+                    <div class="banner-content">
+                        <div class="banner-eyebrow mb-2">Your digital library</div>
+                        <h2 class="banner-title mb-2">Knowledge begins with one good book.</h2>
+                        <p class="mb-0 small text-white-50">Keep your collection organized and accessible.</p>
+                    </div>
+                    <span class="banner-icon">📚</span>
+                </div>
+
+                <div class="panel flex-grow-1">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Quick Actions</h2>
+                        <p class="panel-subtitle">Frequently used library tasks.</p>
+                    </div>
+
+                    <div class="p-3">
+                        <div class="row g-2">
+                            <div class="col-12 col-sm-6">
+                                <a asp-controller="Book" asp-action="Add" class="quick-action"><span class="quick-icon">＋</span>Add Book</a>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <a asp-controller="Student" asp-action="Add" class="quick-action"><span class="quick-icon">🎓</span>Add Student</a>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <a asp-controller="BookIssue" asp-action="Index" class="quick-action"><span class="quick-icon">📇</span>Issue Book</a>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <a asp-controller="Fine" asp-action="Index" class="quick-action"><span class="quick-icon">⏳</span>View Fines</a>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <a asp-controller="Admin" asp-action="SendNotification" class="quick-action"><span class="quick-icon">📢</span>Send Notification</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

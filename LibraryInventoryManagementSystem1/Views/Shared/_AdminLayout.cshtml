@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Library Inventory</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="h-100" style="background-color: #f8f7fc;">
+
+    <div class="d-flex h-100">
+
+        <!-- DESKTOP SIDEBAR -->
+        <div class="d-none d-lg-flex flex-column text-white flex-shrink-0"
+             style="width: 260px; background-color: #1e1b3a;">
+            @await Html.PartialAsync("_SidebarNav")
+        </div>
+
+        <!-- MOBILE SIDEBAR -->
+        <div class="offcanvas offcanvas-start text-white d-lg-none"
+             tabindex="-1" id="adminSidebar" style="width: 260px; background-color: #1e1b3a;">
+            <div class="offcanvas-header border-bottom border-light border-opacity-10">
+                <h5 class="offcanvas-title text-white">Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0 d-flex flex-column">
+                @await Html.PartialAsync("_SidebarNav")
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="d-flex flex-column flex-grow-1 overflow-auto">
+
+            <header class="navbar px-3 py-2 sticky-top"
+                    style="background-color: #ffffff; border-bottom: 1px solid #e7e5f0;">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-secondary d-lg-none" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#adminSidebar"
+                            aria-controls="adminSidebar" aria-label="Open menu">
+                        ☰
+                    </button>
+                    <div>
+                        <h1 class="h5 fw-bold mb-0" style="color:#1e1b3a;">@ViewData["Title"]</h1>
+                        <div class="small text-muted">Library Management System</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 ms-auto">
+                    <div class="dropdown d-none d-md-block" style="width: 300px;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">🔎</span>
+                            <input type="text" id="globalSearchInput" class="form-control"
+                                   placeholder="Search books, students..." autocomplete="off" />
+                        </div>
+                        <div id="globalSearchResults" class="dropdown-menu shadow-sm p-0"
+                             style="width: 300px; max-height: 380px; overflow-y: auto; display:none;">
+                        </div>
+                    </div>
+
+                    <!-- NOTIFICATION BELL -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary position-relative" type="button"
+                                id="notifBell" data-bs-toggle="dropdown" aria-expanded="false">
+                            🔔
+                            <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill d-none"
+                                  style="background-color:#f59e0b;">
+                                0
+                            </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end shadow-sm p-0" style="width: 340px; max-height: 420px; overflow-y: auto;" aria-labelledby="notifBell">
+                            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                                <span class="fw-bold small">Notifications</span>
+                                <a href="#" id="markAllReadBtn" class="small text-decoration-none" style="color:#4338ca;">Mark all read</a>
+                            </div>
+                            <div id="notifList">
+                                <div class="text-center text-muted small py-4">Loading...</div>
+                            </div>
+                            <div class="text-center border-top py-2">
+                                <a asp-controller="Admin" asp-action="Notifications" class="small fw-semibold text-decoration-none" style="color:#4338ca;">View all</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                             style="width: 38px; height: 38px; background-color:#4338ca;">
+                            A
+                        </div>
+                        <div class="d-none d-sm-block lh-sm">
+                            <div class="fw-semibold small">Admin</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-grow-1 p-3 p-md-4">
+                @RenderBody()
+            </main>
+
+            <footer class="d-flex justify-content-between px-3 py-2 small text-muted"
+                    style="background-color: #ffffff; border-top: 1px solid #e7e5f0;">
+                <span>© @DateTime.Now.Year Library Inventory Management System</span>
+                <span>Admin Panel</span>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <script>
+            async function refreshNotifBadge() {
+                try {
+                    const res = await fetch('/Admin/UnreadNotificationCount');
+                    const data = await res.json();
+                    const badge = document.getElementById('notifBadge');
+                    if (data.count > 0) {
+                        badge.innerText = data.count > 9 ? '9+' : data.count;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            async function loadNotifDropdown() {
+                const listEl = document.getElementById('notifList');
+                listEl.innerHTML = '<div class="text-center text-muted small py-4">Loading...</div>';
+                try {
+                    const res = await fetch('/Admin/RecentNotifications');
+                    const html = await res.text();
+                    listEl.innerHTML = html;
+                } catch (e) {
+                    listEl.innerHTML = '<div class="text-center text-muted small py-4">Failed to load</div>';
+                }
+            }
+
+            document.getElementById('notifBell').addEventListener('click', loadNotifDropdown);
+
+            document.getElementById('markAllReadBtn').addEventListener('click', async (e) => {
+                e.preventDefault();
+                await fetch('/Admin/MarkAllNotificationsRead', { method: 'POST' });
+                refreshNotifBadge();
+                loadNotifDropdown();
+            });
+
+            refreshNotifBadge();
+            setInterval(refreshNotifBadge, 15000);
+    </script>
+
+    <script>
+            (function() {
+                const input = document.getElementById('globalSearchInput');
+                const resultsBox = document.getElementById('globalSearchResults');
+                let debounceTimer = null;
+
+                function renderResults(data, query) {
+                    const hasBooks = data.books && data.books.length > 0;
+                    const hasStudents = data.students && data.students.length > 0;
+
+                    if (!hasBooks && !hasStudents) {
+                        resultsBox.innerHTML = '<div class="text-center text-muted small py-3">No results for "' + query + '"</div>';
+                        resultsBox.style.display = 'block';
+                        return;
+                    }
+
+                    let html = '';
+
+                    if (hasBooks) {
+                        html += '<div class="px-3 pt-2 pb-1 small fw-bold text-muted">Books</div>';
+                        data.books.forEach(function(b) {
+                            html += '<a href="' + b.url + '" class="dropdown-item py-2">' +
+                                '<div class="fw-semibold small">' + b.title + '</div>' +
+                                '<div class="text-muted" style="font-size:0.75rem;">' + (b.subtitle || '') + '</div>' +
+                                '</a>';
+                        });
+                    }
+
+                    if (hasStudents) {
+                        html += '<div class="px-3 pt-2 pb-1 small fw-bold text-muted border-top">Students</div>';
+                        data.students.forEach(function(s) {
+                            html += '<a href="' + s.url + '" class="dropdown-item py-2">' +
+                                '<div class="fw-semibold small">' + s.title + '</div>' +
+                                '<div class="text-muted" style="font-size:0.75rem;">' + (s.subtitle || '') + '</div>' +
+                                '</a>';
+                        });
+                    }
+
+                    resultsBox.innerHTML = html;
+                    resultsBox.style.display = 'block';
+                }
+
+                async function runSearch(query) {
+                    if (!query || query.trim().length < 2) {
+                        resultsBox.style.display = 'none';
+                        return;
+                    }
+                    try {
+                        const res = await fetch('/Admin/GlobalSearch?q=' + encodeURIComponent(query));
+                        const data = await res.json();
+                        renderResults(data, query);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+
+                // Live search while typing (debounced)
+                input.addEventListener('input', function() {
+                    const query = input.value;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function() {
+                        runSearch(query);
+                    }, 300);
+                });
+
+                // Also search immediately on Enter
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        clearTimeout(debounceTimer);
+                        runSearch(input.value);
+                    }
+                });
+
+                // Show results again if focusing back in with existing text
+                input.addEventListener('focus', function() {
+                    if (input.value.trim().length >= 2) {
+                        resultsBox.style.display = 'block';
+                    }
+                });
+
+                // Hide dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
+                        resultsBox.style.display = 'none';
+                    }
+                });
+            })();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

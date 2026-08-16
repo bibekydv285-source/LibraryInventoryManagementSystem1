@@ -1,0 +1,131 @@
+﻿@model LibraryInventoryManagementSystem1.Models.Student
+
+@{
+    ViewData["Title"] = "Delete Student";
+    Layout = "_Layout";
+}
+
+<style>
+    .delete-wrapper {
+        max-width: 500px;
+        margin: 3rem auto;
+    }
+
+    .delete-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 2rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid #dc2626;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+        .delete-card h3 {
+            color: #dc2626;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .delete-card p.warning-text {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+    .student-summary {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .student-summary dt {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            color: #94a3b8;
+        }
+
+        .student-summary dd {
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 0.6rem;
+        }
+
+    .btn-confirm-delete {
+        background: #dc2626;
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        padding: 0.6rem 1.4rem;
+        border-radius: 8px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .btn-confirm-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(220, 38, 38, 0.35);
+            color: #fff;
+        }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #374151;
+        font-weight: 500;
+        padding: 0.6rem 1.4rem;
+        border-radius: 8px;
+    }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="delete-wrapper">
+    <div class="delete-card">
+        <h3>Delete Student</h3>
+        <p class="warning-text">This action cannot be undone. Please review the details below before confirming.</p>
+
+        <dl class="student-summary">
+            <dt>Full name</dt>
+            <dd>@Model.Name</dd>
+
+            <dt>Email</dt>
+            <dd>@Model.Email</dd>
+
+            <dt>Phone number</dt>
+            <dd>@Model.PhoneNumber</dd>
+
+            <dt>Username</dt>
+            <dd>@Model.Username</dd>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Course))
+            {
+                <dt>Course</dt>
+                <dd>@Model.Course</dd>
+            }
+        </dl>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-confirm-delete">Yes, delete student</button>
+            <a asp-action="Index" class="btn-cancel">Cancel</a>
+        </form>
+    </div>
+</div>

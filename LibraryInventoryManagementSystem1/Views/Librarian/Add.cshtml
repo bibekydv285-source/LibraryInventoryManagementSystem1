@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Add Librarian";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Add Librarian</h2>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color:#c0392b; margin-bottom:15px;">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="post" asp-action="Add" style="max-width:500px;">
+    <div style="margin-bottom:15px;">
+        <label>Username</label>
+        <input type="text" name="username" style="width:100%; padding:8px;" required />
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label>Email</label>
+        <input type="email" name="email" style="width:100%; padding:8px;" required />
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label>Phone Number</label>
+        <input type="tel" name="phoneNumber" style="width:100%; padding:8px;" placeholder="e.g. 9800000000" />
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label>Password</label>
+        <input type="password" name="password" style="width:100%; padding:8px;" required />
+    </div>
+
+    <button type="submit">Add Librarian</button>
+    <a asp-action="Index" style="margin-left:10px;">Cancel</a>
+</form>

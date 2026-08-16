@@ -1,0 +1,271 @@
+﻿@using LibraryInventoryManagementSystem1.Models
+@model List<Student>
+
+@{
+    ViewData["Title"] = "Students";
+    Layout = "_Layout";
+}
+
+<style>
+
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+        --light-bg: #f8fafc;
+        --border: #e2e8f0;
+        --text: #1e293b;
+    }
+
+    body {
+        background: #f8fafc;
+    }
+
+    .students-container {
+        margin-top: 35px;
+    }
+
+    .students-header h3 {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .btn-add {
+        background: var(--primary);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: .3s;
+    }
+
+        .btn-add:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+    .search-box input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79,70,229,.15);
+    }
+
+    .search-btn {
+        min-width: 110px;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+
+    table {
+        margin: 0 !important;
+    }
+
+    thead {
+        background: var(--primary);
+        color: white;
+    }
+
+        thead th {
+            padding: 18px !important;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+    tbody td {
+        padding: 18px !important;
+        color: var(--text);
+        vertical-align: middle;
+    }
+
+    /* Student ID badge — updates automatically since it reads live from the model */
+    .student-id-badge {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    .actions-col {
+        white-space: nowrap;
+    }
+
+    .empty-row {
+        padding: 30px !important;
+        text-align: center;
+        color: #64748b;
+    }
+
+</style>
+
+<div class="container students-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 students-header">
+        <h3 class="mb-0">
+            <i class="bi bi-people-fill"></i>
+            Students
+        </h3>
+
+        <a asp-action="Add" class="btn-add">
+            <i class="bi bi-plus-circle"></i>
+            Add Student
+        </a>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Search -->
+    <form method="get" asp-action="Index" class="search-box row g-2 mb-4">
+        <div class="col">
+            <input type="text"
+                   name="search"
+                   value="@ViewBag.SearchTerm"
+                   class="form-control form-control-lg"
+                   placeholder="Search by name, email, username, or student ID..." />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-primary btn-lg search-btn">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>
+                            <i class="bi bi-upc-scan"></i>
+                            Student ID
+                        </th>
+                        <th>
+                            <i class="bi bi-person"></i>
+                            Name
+                        </th>
+                        <th>
+                            <i class="bi bi-envelope"></i>
+                            Email
+                        </th>
+                        <th>
+                            <i class="bi bi-calendar-event"></i>
+                            Date of Birth
+                        </th>
+                        <th>
+                            <i class="bi bi-person-badge"></i>
+                            Username
+                        </th>
+                        <th>
+                            <i class="bi bi-gender-ambiguous"></i>
+                            Gender
+                        </th>
+                        <th>
+                            <i class="bi bi-geo-alt"></i>
+                            Address
+                        </th>
+                        <th class="text-center">
+                            <i class="bi bi-calendar"></i>
+                            Age
+                        </th>
+                        <th>
+                            <i class="bi bi-telephone"></i>
+                            Phone
+                        </th>
+                        <th class="text-center">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var student in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <!-- Reads student.StudentCode directly from the database on every
+                                         page load, so it always reflects the real, current ID —
+                                         no caching or manual sync needed. -->
+                                    <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle student-id-badge">
+                                        @student.StudentCode
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>@student.Name</strong>
+                                </td>
+
+                                <td>@student.Email</td>
+
+                                <td>@student.DateOfBirth.ToString("dd MMM yyyy")</td>
+
+                                <td>@student.Username</td>
+
+                                <td>@student.Gender</td>
+
+                                <td>@student.Address</td>
+
+                                <td class="text-center">
+                                    @(student.Age.HasValue ? student.Age.ToString() : "—")
+                                </td>
+
+                                <td>@student.PhoneNumber</td>
+
+                                <td class="text-center actions-col">
+                                    <div class="d-flex gap-2 justify-content-center align-items-center">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@student.Id"
+                                           class="btn btn-sm btn-warning text-white">
+                                            <i class="bi bi-pencil"></i>
+                                            Edit
+                                        </a>
+
+                                        <form asp-action="Delete"
+                                              asp-route-id="@student.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Delete this student? This cannot be undone.');"
+                                              class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="empty-row">
+                                No students found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>

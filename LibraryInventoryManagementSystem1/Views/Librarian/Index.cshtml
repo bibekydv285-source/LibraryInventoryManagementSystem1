@@ -1,0 +1,53 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.User>
+
+@{
+    ViewData["Title"] = "Total Librarians";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>Total Librarians</h2>
+        <p>Total: <strong>@Model.Count</strong></p>
+    </div>
+    <a asp-action="Add" class="btn-primary" style="padding:8px 16px; text-decoration:none;">+ Add Librarian</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="color:green; margin-bottom:10px;">@TempData["Success"]</div>
+}
+
+<table style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th style="text-align:left; padding:8px;">Id</th>
+            <th style="text-align:left; padding:8px;">Username</th>
+            <th style="text-align:left; padding:8px;">Email</th>
+            <th style="text-align:left; padding:8px;">Phone Number</th>
+            <th style="text-align:left; padding:8px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="5" style="padding:8px;">No librarians found.</td></tr>
+        }
+        else
+        {
+            foreach (var librarian in Model)
+            {
+                <tr>
+                    <td style="padding:8px;">@librarian.Id</td>
+                    <td style="padding:8px;">@librarian.Username</td>
+                    <td style="padding:8px;">@librarian.Email</td>
+                    <td style="padding:8px;">@(string.IsNullOrWhiteSpace(librarian.PhoneNumber) ? "—" : librarian.PhoneNumber)</td>
+                    <td style="padding:8px;">
+                        <a asp-action="Edit" asp-route-id="@librarian.Id" style="margin-right:10px;">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@librarian.Id" style="color:#c0392b;">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

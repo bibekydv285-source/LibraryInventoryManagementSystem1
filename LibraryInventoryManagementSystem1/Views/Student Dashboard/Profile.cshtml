@@ -1,0 +1,57 @@
+﻿@model LibraryInventoryManagementSystem1.Dto.ProfileDto
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "_StudentLayout";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="margin-bottom:20px; padding:12px 16px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; color:#166534;">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="dashboard-section">
+    <h3 style="margin-bottom:15px;">My Profile</h3>
+
+    <form asp-action="Profile" method="post" style="max-width:480px;">
+        <div style="margin-bottom:14px;">
+            <label>Student ID</label>
+            <input value="@Model.StudentCode" disabled style="width:100%; padding:8px; background:#f3f4f6;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label>Name</label>
+            <input value="@Model.Name" disabled style="width:100%; padding:8px; background:#f3f4f6;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label>Username</label>
+            <input value="@Model.Username" disabled style="width:100%; padding:8px; background:#f3f4f6;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" style="width:100%; padding:8px;" />
+            <span asp-validation-for="Email" style="color:#c0392b; font-size:0.85em;"></span>
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber" style="width:100%; padding:8px;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label asp-for="Address"></label>
+            <input asp-for="Address" style="width:100%; padding:8px;" />
+        </div>
+
+        @* <div style="margin-bottom:20px;">
+            <label>Course</label>
+            <input value="@Model.Course" disabled style="width:100%; padding:8px; background:#f3f4f6;" />
+        </div> *@
+
+        <input type="hidden" asp-for="StudentId" />
+        <button type="submit" class="btn-primary" style="padding:10px 20px;">Save Changes</button>
+    </form>
+</div>

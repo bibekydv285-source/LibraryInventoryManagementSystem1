@@ -1,0 +1,433 @@
+﻿@using LibraryInventoryManagementSystem1.Dto
+@model UserDto
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Login - Library Inventory System</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+</head>
+
+<body class="bg-light" style="overflow-y: auto;">
+
+
+    <!-- =====================================================
+         MAIN PAGE
+         NOTE: align-items-start + py-5 (instead of
+         align-items-center on a hard min-vh-100) lets the
+         page scroll naturally on shorter screens instead of
+         clipping the card's top/bottom.
+    ====================================================== -->
+
+    <div class="min-vh-100 d-flex align-items-start align-items-md-center justify-content-center px-3 py-4"
+         style="
+        background: linear-gradient(135deg, #0b1730 0%, #16244a 60%, #1c2f5e 100%);
+        ">
+
+
+        <!-- =================================================
+             LOGIN CARD
+        ================================================== -->
+
+        <div class="card border-0 shadow-lg rounded-4 w-100"
+             style="max-width: 440px;">
+
+
+            <div class="card-body p-4">
+
+
+                <!-- =================================================
+                     LOGO
+                ================================================== -->
+
+                <div class="text-center mb-3">
+
+                    <div class="mx-auto mb-2 d-flex align-items-center justify-content-center rounded-4 shadow"
+                         style="
+                        width: 48px;
+                        height: 48px;
+                        background: linear-gradient(135deg,#2563eb,#4f7cff);
+                        ">
+
+                        <span class="fs-5">
+                            📚
+                        </span>
+
+                    </div>
+
+
+                    <h1 class="fw-bold text-dark mb-1"
+                        style="font-size: 1.75rem;">
+                        Welcome Back
+                    </h1>
+
+
+                    <p class="text-secondary mb-0 small">
+                        Sign in to your Library Inventory System
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     SUCCESS MESSAGE
+                ================================================== -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success border-0 rounded-3 small">
+
+                        <strong>Success!</strong>
+                        @TempData["SuccessMessage"]
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     ERROR MESSAGE
+                ================================================== -->
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger border-0 rounded-3 small">
+
+                        <strong>Login failed!</strong>
+                        @ViewBag.ErrorMessage
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     LOGIN FORM
+                ================================================== -->
+
+                <form asp-action="LoginUser"
+                      method="post"
+                      autocomplete="off">
+
+
+                    <!-- =================================================
+                         ROLE
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold small text-dark mb-1">
+                            Sign in as
+                        </label>
+
+
+                        <div class="btn-group w-100"
+                             role="group"
+                             aria-label="Login role">
+
+
+                            <!-- USER -->
+
+                            <input type="radio"
+                                   class="btn-check"
+                                   name="Role"
+                                   id="roleUser"
+                                   value="User"
+                                   autocomplete="off"
+                                   checked />
+
+
+                            <label class="btn btn-outline-primary py-2 fw-semibold"
+                                   for="roleUser">
+
+                                👤 User
+
+                            </label>
+
+
+                            <!-- ADMIN -->
+
+                            <input type="radio"
+                                   class="btn-check"
+                                   name="Role"
+                                   id="roleAdmin"
+                                   value="Admin"
+                                   autocomplete="off" />
+
+
+                            <label class="btn btn-outline-primary py-2 fw-semibold"
+                                   for="roleAdmin">
+
+                                🛡️ Admin
+
+                            </label>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         EMAIL
+                    ================================================== -->
+
+                    <div class="mb-2">
+
+                        <label for="loginEmail"
+                               class="form-label fw-semibold small mb-1">
+
+                            Email Address
+
+                        </label>
+
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-white">
+                                ✉️
+                            </span>
+
+
+                            <input type="email"
+                                   id="loginEmail"
+                                   name="Email"
+                                   class="form-control"
+                                   placeholder="Enter your email address"
+                                   autocomplete="off"
+                                   required />
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PASSWORD LABEL
+                    ================================================== -->
+
+                    <div class="mb-1">
+
+                        <label for="loginPassword"
+                               class="form-label fw-semibold small mb-0">
+
+                            Password
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PASSWORD
+                    ================================================== -->
+
+                    <div class="input-group mb-2">
+
+
+                        <span class="input-group-text bg-white">
+                            🔒
+                        </span>
+
+
+                        <input type="password"
+                               id="loginPassword"
+                               name="Password"
+                               class="form-control form-control-lg"
+                               placeholder="Enter your password"
+                               autocomplete="new-password"
+                               required />
+
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                id="passwordButton"
+                                onclick="togglePassword()"
+                                aria-label="Show password">
+
+                            👁️
+
+                        </button>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REMEMBER ME
+                    ================================================== -->
+
+                    <div class="form-check mb-3">
+
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="rememberMe"
+                               name="RememberMe" />
+
+                        <label class="form-check-label small text-secondary"
+                               for="rememberMe">
+
+                            Remember me
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SIGN IN BUTTON (pill-shaped, matches reference)
+                    ================================================== -->
+
+                    <button type="submit"
+                            class="btn btn-primary w-100 fw-semibold rounded-pill shadow-sm py-2">
+
+                        Sign In
+
+                        <span class="ms-2">
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <!-- =================================================
+                         FORGOT PASSWORD (centered below the button,
+                         matching the reference design)
+                    ================================================== -->
+
+                    <div class="text-center mt-2">
+
+                        <a asp-controller="Auth"
+                           asp-action="ForgotPassword"
+                           class="small text-primary text-decoration-none fw-semibold">
+
+                            Forgot password?
+
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+
+                <!-- =================================================
+                     DIVIDER
+                ================================================== -->
+
+                <div class="d-flex align-items-center my-3">
+
+
+                    <hr class="flex-grow-1 text-secondary" />
+
+
+                    <span class="px-3 text-secondary small">
+                        OR
+                    </span>
+
+
+                    <hr class="flex-grow-1 text-secondary" />
+
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTER
+                ================================================== -->
+
+                <div class="text-center rounded-3 p-3"
+                     style="background:#eff6ff; border:1px solid #dbeafe;">
+
+
+                    <p class="text-secondary small mb-1">
+
+                        Don't have a student account?
+
+                    </p>
+
+
+                    <a asp-controller="Student"
+                       asp-action="Add"
+                       class="text-primary fw-bold text-decoration-none">
+
+                        Create Student Account →
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PASSWORD SCRIPT
+    ====================================================== -->
+
+    <script>
+
+            function togglePassword() {
+
+                const passwordInput =
+                    document.getElementById("loginPassword");
+
+                const passwordButton =
+                    document.getElementById("passwordButton");
+
+
+                if (passwordInput.type === "password") {
+
+                    passwordInput.type = "text";
+
+                    passwordButton.textContent = "🙈";
+
+                    passwordButton.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                }
+                else {
+
+                    passwordInput.type = "password";
+
+                    passwordButton.textContent = "👁️";
+
+                    passwordButton.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            }
+
+    </script>
+
+
+    <!-- Bootstrap JavaScript -->
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>

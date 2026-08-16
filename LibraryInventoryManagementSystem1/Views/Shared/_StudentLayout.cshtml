@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Inventory</title>
+
+    <!-- Site-wide + Student Dashboard specific styles -->
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/studentdashboard.css" rel="stylesheet" />
+</head>
+<body>
+
+    @{
+        // =================================================
+        // Figures out which action is currently being viewed
+        // so the matching sidebar link can be highlighted
+        // as "active".
+        // =================================================
+        string CurrentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+        string NavClass(string action) => action == CurrentAction ? "nav-item active" : "nav-item";
+    }
+
+    <!-- Renders a hidden __RequestVerificationToken input, available on
+         EVERY page that uses this layout. This is what lets the
+         notification bell dropdown POST to /Student/MarkNotificationRead
+         without needing a separate token on each individual view. -->
+    @Html.AntiForgeryToken()
+
+    <div class="admin-wrapper">
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+        <aside class="admin-sidebar">
+
+            <!-- Brand / logo block at the top of the sidebar -->
+            <div class="sidebar-brand">
+                <span class="brand-icon">📖</span>
+                <div>
+                    <div class="brand-title">Library Inventory</div>
+                    <div class="brand-subtitle">Student Portal</div>
+                </div>
+            </div>
+
+            <!-- =================================================
+                 NAVIGATION LINKS
+                 Each link points to StudentController and lights
+                 up (active class) when its action matches the
+                 current page.
+            ================================================== -->
+            <nav class="sidebar-nav">
+
+                <!-- Dashboard: overview page with issued books / fine summary -->
+                <a class="@NavClass("Dashboard")" asp-controller="Student" asp-action="Dashboard">
+                    <span class="nav-icon">🏠</span> Dashboard
+                </a>
+
+                <!-- My Profile: view/edit the logged-in student's own details -->
+                <a class="@NavClass("Profile")" asp-controller="Student" asp-action="Profile">
+                    <span class="nav-icon">👤</span> My Profile
+                </a>
+
+                <!-- Search Books: search the full catalog by title/author/category -->
+                <a class="@NavClass("Search")" asp-controller="Student" asp-action="Search">
+                    <span class="nav-icon">🔍</span> Search Books
+                </a>
+
+                <!-- Available Books: books currently in stock (AvailableQty > 0) -->
+                <a class="@NavClass("AvailableBooks")" asp-controller="Student" asp-action="AvailableBooks">
+                    <span class="nav-icon">📗</span> Available Books
+                </a>
+
+                <!-- My Borrowed Books: books this student currently has issued -->
+                <a class="@NavClass("BorrowedBooks")" asp-controller="Student" asp-action="BorrowedBooks">
+                    <span class="nav-icon">📚</span> My Borrowed Books
+                </a>
+
+                <!-- My Book Returns: history of books this student has already returned -->
+                <a class="@NavClass("ReturnHistory")" asp-controller="Student" asp-action="ReturnHistory">
+                    <span class="nav-icon">↩️</span> My Book Returns
+                </a>
+
+                <!-- Reservations: books this student has reserved / can reserve -->
+                <a class="@NavClass("Reservations")" asp-controller="Student" asp-action="Reservations">
+                    <span class="nav-icon">🔖</span> Reservations
+                </a>
+
+                <!-- My Fines: outstanding/paid fines tied to this student's issues -->
+                <a class="@NavClass("Fines")" asp-controller="Student" asp-action="Fines">
+                    <span class="nav-icon">💰</span> My Fines
+                </a>
+
+                <!-- Notifications: system messages for this student (marks unread as read) -->
+                <a class="@NavClass("Notifications")" asp-controller="Student" asp-action="Notifications">
+                    <span class="nav-icon">🔔</span> Notifications
+                </a>
+
+                <!-- Change Password: update the student's login password -->
+                <a class="@NavClass("ChangePassword")" asp-controller="Student" asp-action="ChangePassword">
+                    <span class="nav-icon">🔑</span> Change Password
+                </a>
+
+                <!-- Logout: clears the session and redirects to Login -->
+                <a class="nav-item nav-logout" asp-controller="Student" asp-action="Logout">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+
+            </nav>
+        </aside>
+
+        <!-- =================================================
+             MAIN CONTENT AREA
+        ================================================== -->
+        <div class="admin-main">
+
+            <!-- Top bar shows the title of whichever page is active,
+                 plus the notification bell on the right -->
+            <header class="admin-topbar" style="display:flex; align-items:center; justify-content:space-between;">
+                <h1 class="page-title">@ViewData["Title"]</h1>
+                @await Component.InvokeAsync("NotificationBanner")
+            </header>
+
+            <!-- Each view's own content gets rendered here -->
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+
+        </div>
+    </div>
+
+    <!-- =================================================
+         SCRIPTS
+    ================================================== -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <!-- Lets individual views inject their own page-specific scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

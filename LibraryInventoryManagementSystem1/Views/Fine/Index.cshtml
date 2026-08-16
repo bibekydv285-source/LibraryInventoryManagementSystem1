@@ -1,0 +1,78 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.Fine>
+
+@{
+    ViewData["Title"] = "Pending Books (Fines)";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Pending Fines</h2>
+</div>
+
+<a href="@Url.Action("History")" style="display:inline-block; margin-bottom:15px;">View Fine History</a>
+<a href="@Url.Action("Create")" style="display:inline-block; margin-bottom:15px; margin-left:15px;">+ Add Fine</a>
+
+@if (TempData["Error"] != null)
+{
+    <div style="color:#b00020; margin-bottom:10px;">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div style="color:#0a7a0a; margin-bottom:10px;">@TempData["Success"]</div>
+}
+
+<table class="table" style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th>Fine Id</th>
+            <th>Book</th>
+            <th>Student</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th style="min-width:300px;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var fine in Model)
+            {
+                <tr>
+                    <td>@fine.FineId</td>
+                    <td>@(fine.BookIssue?.Book?.Title ?? "N/A")</td>
+                    <td>@(fine.BookIssue?.Student?.Name ?? "N/A")</td>
+                    <td>@fine.Amount.ToString("C")</td>
+                    <td>@fine.PaymentStatus</td>
+                    <td>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            @if (fine.PaymentStatus == "Pending")
+                            {
+                                <form method="post" asp-action="RecordPayment" asp-route-id="@fine.FineId" style="display:inline;">
+                                    <button type="submit" style="padding:6px 12px; background:#2e7d32; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                        Record Payment
+                                    </button>
+                                </form>
+                            }
+
+                            <a href="@Url.Action("Edit", new { id = fine.FineId })"
+                               style="padding:6px 12px; background:#1565c0; color:#fff; border-radius:4px; text-decoration:none;">
+                                Edit
+                            </a>
+
+                            <form method="post" asp-action="Delete" asp-route-id="@fine.FineId" style="display:inline;"
+                                  onsubmit="return confirm('Delete this fine? This cannot be undone.');">
+                                <button type="submit" style="padding:6px 12px; background:#b00020; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6">No pending fines.</td></tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.AdminNotification>
+
+@if (!Model.Any())
+{
+    <div class="text-center text-muted small py-4">No notifications yet</div>
+}
+else
+{
+    foreach (var n in Model)
+    {
+        var bg = n.IsRead ? "" : "bg-light";
+        <div class="px-3 py-2 border-bottom @bg notif-item" style="cursor:pointer;" data-id="@n.Id">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="fw-semibold small">@n.Title</span>
+                @if (!n.IsRead)
+                {
+                    <span class="badge bg-primary rounded-circle" style="width:8px;height:8px;padding:0;"></span>
+                }
+            </div>
+            <div class="text-muted small">@n.Message</div>
+            <div class="text-muted" style="font-size:0.7rem;">@n.CreatedAt.ToString("MMM dd, hh:mm tt")</div>
+        </div>
+    }
+}
+
+<script>
+    document.querySelectorAll('.notif-item').forEach(item => {
+        item.addEventListener('click', async function () {
+            const id = this.dataset.id;
+            await fetch('/Admin/MarkNotificationRead?id=' + id, { method: 'POST' });
+            this.classList.remove('bg-light');
+            if (typeof refreshNotifBadge === 'function') refreshNotifBadge();
+        });
+    });
+</script>

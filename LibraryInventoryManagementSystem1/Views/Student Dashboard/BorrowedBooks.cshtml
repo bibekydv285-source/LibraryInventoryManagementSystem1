@@ -1,0 +1,65 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.BookIssue>
+@{
+    ViewData["Title"] = "My Borrowed Books";
+    Layout = "_StudentLayout";
+}
+
+<div class="dashboard-section">
+    <h3 style="margin-bottom:15px;">My Borrowed Books</h3>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <table class="table" style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var issue in Model)
+                {
+                    bool isOverdue = issue.DueDate < DateTime.Now;
+                    <tr>
+                        <td>@issue.Book!.Title</td>
+                        <td>@issue.Book!.Author</td>
+                        <td>@issue.DueDate.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            @if (isOverdue)
+                            {
+                                <span style="color:#c0392b; font-weight:600;">Overdue</span>
+                            }
+                            else
+                            {
+                                <span style="color:#27ae60;">On time</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-controller="Student" asp-action="ReturnBook" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="issueId" value="@issue.IssueId" />
+                                <button type="submit" class="btn-secondary" style="padding:6px 12px;">Return Book</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5">You have no books currently issued.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

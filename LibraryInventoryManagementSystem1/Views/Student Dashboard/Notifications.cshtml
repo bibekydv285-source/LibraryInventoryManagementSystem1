@@ -1,0 +1,323 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.Notification>
+@{
+    ViewData["Title"] = "Notifications";
+    Layout = "_StudentLayout";
+}
+
+<style>
+    .notif-top-bar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .notif-unread-count {
+        color: #6b7280;
+        font-size: .9rem;
+    }
+
+    .notif-mark-all-btn {
+        background: #f5f4ff;
+        border: 1px solid #ddd9ff;
+        border-radius: 8px;
+        color: #4338ca;
+        cursor: pointer;
+        font-size: .85rem;
+        font-weight: 600;
+        padding: 8px 14px;
+        transition: background .15s ease;
+    }
+
+        .notif-mark-all-btn:hover {
+            background: #eae8ff;
+        }
+
+        .notif-mark-all-btn:disabled {
+            cursor: default;
+            opacity: .5;
+        }
+
+    .notif-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .notif-card {
+        align-items: flex-start;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        gap: 12px;
+        padding: 12px 16px;
+        position: relative;
+        transition: background .15s ease, border-color .15s ease;
+    }
+
+        .notif-card:hover,
+        .notif-card:focus-visible {
+            background: #f8f7fc;
+            border-color: #c7c4f0;
+        }
+
+        .notif-card:focus-visible {
+            outline: 2px solid #4338ca;
+            outline-offset: 2px;
+        }
+
+        .notif-card.unread {
+            background: #f5f4ff;
+            border-color: #ddd9ff;
+        }
+
+            .notif-card.unread::before {
+                background: #4338ca;
+                border-radius: 50%;
+                content: "";
+                height: 8px;
+                position: absolute;
+                right: 14px;
+                top: 14px;
+                width: 8px;
+            }
+
+    .notif-icon {
+        font-size: 1.2em;
+    }
+
+    .notif-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notif-type {
+        font-size: 0.75em;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .notif-type-duereminder {
+        color: #e67e22;
+    }
+
+    .notif-type-overdue {
+        color: #c0392b;
+    }
+
+    .notif-type-reservation {
+        color: #4338ca;
+    }
+
+    .notif-type-default {
+        color: #0f766e;
+    }
+
+    .notif-title {
+        color: #1e1b3a;
+        font-size: 0.95em;
+        font-weight: 700;
+    }
+
+    .notif-preview {
+        color: #4b5563;
+        font-size: 0.9em;
+        margin-top: 2px;
+        max-width: 480px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .notif-date {
+        color: #999;
+        font-size: 0.8em;
+        margin-top: 4px;
+    }
+
+    .notif-empty {
+        color: #6b7280;
+    }
+
+    .modal-notif-type {
+        color: #4338ca;
+        font-size: 0.75em;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .modal-notif-title {
+        margin-top: 2px;
+    }
+
+    .modal-notif-message {
+        color: #374151;
+        white-space: pre-wrap;
+    }
+
+    .modal-notif-date {
+        color: #999;
+        font-size: 0.85em;
+        margin-top: 12px;
+    }
+</style>
+
+<div class="dashboard-section">
+    <h3 style="margin-bottom:15px;">Notifications</h3>
+
+    @{
+        int unreadCount = Model.Count(n => !n.IsRead);
+    }
+
+    <div class="notif-top-bar">
+        <span class="notif-unread-count" id="notifUnreadCountLabel">
+            @(unreadCount > 0 ? $"{unreadCount} unread" : "All caught up")
+        </span>
+
+        <button type="button" id="notifMarkAllPageBtn" class="notif-mark-all-btn" @(unreadCount == 0 ? "disabled" : "")>
+            Mark all as read
+        </button>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="notif-list">
+            @foreach (var n in Model)
+            {
+                var (icon, typeClass) = n.Type switch
+                {
+                    "DueReminder" => ("⏰", "notif-type-duereminder"),
+                    "Overdue" => ("⚠️", "notif-type-overdue"),
+                    "Reservation" => ("📚", "notif-type-reservation"),
+                    _ => ("📢", "notif-type-default")
+                };
+                var title = string.IsNullOrWhiteSpace(n.Title) ? n.Type : n.Title;
+
+                <div class="notif-card @(n.IsRead ? "" : "unread")"
+                     role="button"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#notifDetailsModal"
+                     data-id="@n.Id"
+                     data-title="@title"
+                     data-message="@n.Message"
+                     data-type="@n.Type"
+                     data-date="@n.CreatedDate.ToString("dd-MMM-yyyy HH:mm")">
+                    <span class="notif-icon">@icon</span>
+                    <div class="notif-body">
+                        <div class="notif-type @typeClass">@n.Type</div>
+                        <div class="notif-title">@title</div>
+                        <div class="notif-preview">@n.Message</div>
+                        <div class="notif-date">@n.CreatedDate.ToString("dd-MMM-yyyy HH:mm")</div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="notif-empty">You have no notifications.</p>
+    }
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="notifDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:12px; border:0;">
+            <div class="modal-header" style="border-bottom:1px solid #e7e5f0;">
+                <div>
+                    <div id="modalNotifType" class="modal-notif-type"></div>
+                    <h5 class="modal-title modal-notif-title" id="modalNotifTitle"></h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalNotifMessage" class="modal-notif-message"></p>
+                <div id="modalNotifDate" class="modal-notif-date"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function() {
+            const modal = document.getElementById('notifDetailsModal');
+
+            function getToken() {
+                return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+            }
+
+            function refreshTopBar() {
+                const stillUnread = document.querySelectorAll('.notif-card.unread').length;
+                const label = document.getElementById('notifUnreadCountLabel');
+                const btn = document.getElementById('notifMarkAllPageBtn');
+
+                if (label) {
+                    label.innerText = stillUnread > 0 ? (stillUnread + ' unread') : 'All caught up';
+                }
+                if (btn) {
+                    btn.disabled = stillUnread === 0;
+                }
+            }
+
+            document.querySelectorAll('.notif-card').forEach(function(card) {
+                card.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+
+            modal.addEventListener('show.bs.modal', function(event) {
+                const card = event.relatedTarget;
+                if (!card) return;
+
+                const id = card.getAttribute('data-id');
+
+                document.getElementById('modalNotifType').innerText = card.getAttribute('data-type');
+                document.getElementById('modalNotifTitle').innerText = card.getAttribute('data-title');
+                document.getElementById('modalNotifMessage').innerText = card.getAttribute('data-message');
+                document.getElementById('modalNotifDate').innerText = card.getAttribute('data-date');
+
+                if (card.classList.contains('unread')) {
+                    card.classList.remove('unread');
+                    refreshTopBar();
+
+                    fetch('/Student/MarkNotificationRead', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': getToken()
+                        },
+                        body: JSON.stringify({ id: parseInt(id) })
+                    }).catch(function(err) {
+                        console.error('Failed to mark notification as read', err);
+                    });
+                }
+            });
+
+            const markAllBtn = document.getElementById('notifMarkAllPageBtn');
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', function() {
+                    fetch('/Student/MarkAllNotificationsRead', {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': getToken()
+                        }
+                    }).then(function() {
+                        document.querySelectorAll('.notif-card.unread').forEach(function(card) {
+                            card.classList.remove('unread');
+                        });
+                        refreshTopBar();
+                    }).catch(function(err) {
+                        console.error('Failed to mark all notifications as read', err);
+                    });
+                });
+            }
+        })();
+    </script>
+}

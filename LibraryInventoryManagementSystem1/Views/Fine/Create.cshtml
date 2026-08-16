@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Add Fine";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Add Fine</h2>
+</div>
+
+<a href="@Url.Action("Index")" style="display:inline-block; margin-bottom:15px;">Back to Pending Fines</a>
+
+@if (TempData["Error"] != null)
+{
+    <div style="color:#b00020; margin-bottom:10px;">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div style="color:#0a7a0a; margin-bottom:10px;">@TempData["Success"]</div>
+}
+
+<div style="max-width:700px; position:relative;">
+    <input type="text" id="searchBox" placeholder="Search student name or book title..." autocomplete="off"
+           style="width:100%; padding:10px; font-size:15px; box-sizing:border-box; margin-bottom:10px; border:1px solid #ccc;" />
+
+    <div id="searchResults" style="border:1px solid #ddd; max-height:300px; overflow-y:auto; margin-bottom:20px; display:none; background:#fff;"></div>
+
+    <form method="post" asp-action="Create" id="fineForm" style="display:none; border:1px solid #ccc; padding:15px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="issueId" id="issueId" />
+
+        <div style="margin-bottom:10px;">
+            <strong>Book:</strong> <span id="selBook"></span><br />
+            <strong>Student:</strong> <span id="selStudent"></span><br />
+            <strong>Due Date:</strong> <span id="selDue"></span> &nbsp;
+            <strong>Days Overdue:</strong> <span id="selDays"></span>
+        </div>
+
+        <label for="amount"><strong>Fine Amount (Rs.)</strong></label><br />
+        <input type="number" step="0.01" min="0.01" name="amount" id="amount" required
+               style="padding:8px; width:200px; margin:8px 0; border:1px solid #ccc;" />
+        <br />
+        <button type="submit" style="padding:8px 16px; background:#2e7d32; color:#fff; border:none; border-radius:4px; cursor:pointer;">Add Fine</button>
+        <button type="button" id="cancelBtn" style="padding:8px 16px; margin-left:8px; cursor:pointer;">Cancel</button>
+    </form>
+</div>
+
+<script>
+    const searchBox = document.getElementById('searchBox');
+    const resultsBox = document.getElementById('searchResults');
+    const form = document.getElementById('fineForm');
+    let debounceTimer;
+
+    searchBox.addEventListener('focus', function() {
+        runSearch(this.value.trim());
+    });
+
+    searchBox.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const term = this.value.trim();
+        debounceTimer = setTimeout(() => runSearch(term), 300);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !resultsBox.contains(e.target)) {
+            resultsBox.style.display = 'none';
+        }
+    });
+
+    function runSearch(term) {
+        fetch('@Url.Action("SearchIssues")?term=' + encodeURIComponent(term))
+            .then(res => res.json())
+            .then(data => renderResults(data))
+            .catch(() => {
+                resultsBox.innerHTML = '<div style="padding:10px;">Search failed.</div>';
+                resultsBox.style.display = 'block';
+            });
+    }
+
+    function renderResults(items) {
+        if (!items.length) {
+            resultsBox.innerHTML = '<div style="padding:10px;">No matching issued books found.</div>';
+            resultsBox.style.display = 'block';
+            return;
+        }
+        resultsBox.innerHTML = items.map(i => `
+                <div class="result-row" style="padding:10px; border-bottom:1px solid #eee; cursor:pointer;"
+                     data-issueid="${i.issueId}" data-book="${i.bookTitle}" data-student="${i.studentName}"
+                     data-due="${i.dueDate}" data-days="${i.daysOverdue}" data-suggested="${i.suggestedFine}">
+                    <strong>${i.studentName}</strong> — ${i.bookTitle}<br />
+                    <small>Due: ${i.dueDate} | Overdue: ${i.daysOverdue} day(s) | Suggested: Rs. ${i.suggestedFine}</small>
+                </div>
+            `).join('');
+        resultsBox.style.display = 'block';
+
+        document.querySelectorAll('.result-row').forEach(row => {
+            row.addEventListener('mouseenter', function() { this.style.background = '#f5f5f5'; });
+            row.addEventListener('mouseleave', function() { this.style.background = '#fff'; });
+            row.addEventListener('click', function() {
+                document.getElementById('issueId').value = this.dataset.issueid;
+                document.getElementById('selBook').textContent = this.dataset.book;
+                document.getElementById('selStudent').textContent = this.dataset.student;
+                document.getElementById('selDue').textContent = this.dataset.due;
+                document.getElementById('selDays').textContent = this.dataset.days;
+                document.getElementById('amount').value = this.dataset.suggested;
+                form.style.display = 'block';
+                resultsBox.style.display = 'none';
+                searchBox.value = this.dataset.student + ' - ' + this.dataset.book;
+            });
+        });
+    }
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        form.style.display = 'none';
+        searchBox.value = '';
+        resultsBox.style.display = 'none';
+    });
+</script>

@@ -1,0 +1,40 @@
+﻿@model LibraryInventoryManagementSystem1.Models.User
+
+@{
+    ViewData["Title"] = "Edit Librarian";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Edit Librarian</h2>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color:#c0392b; margin-bottom:15px;">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="post" asp-action="Edit" asp-route-id="@Model.Id" style="max-width:500px;">
+    <div style="margin-bottom:15px;">
+        <label>Username</label>
+        <input type="text" name="username" value="@Model.Username" style="width:100%; padding:8px;" required />
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label>Email</label>
+        <input type="email" name="email" value="@Model.Email" style="width:100%; padding:8px;" required />
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label>Phone Number</label>
+        <input type="tel" name="phoneNumber" value="@Model.PhoneNumber" style="width:100%; padding:8px;" placeholder="e.g. 9800000000" />
+    </div>
+
+    <button type="submit">Save Changes</button>
+    <a asp-action="Index" style="margin-left:10px;">Cancel</a>
+</form>

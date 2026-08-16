@@ -1,0 +1,200 @@
+﻿<!-- Brand -->
+<div class="sidebar-brand d-flex align-items-center gap-3">
+    <div class="brand-icon">📖</div>
+    <div>
+        <div class="brand-title">Library Inventory</div>
+        <div class="brand-subtitle">Management System</div>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav class="sidebar-navigation flex-grow-1 overflow-auto">
+
+    <div class="sidebar-section-title">Main Menu</div>
+    <div class="list-group list-group-flush">
+        <a asp-controller="Admin" asp-action="Dashboard" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+    </div>
+
+    <div class="sidebar-section-title">Book Management</div>
+    <div class="list-group list-group-flush">
+        <a asp-controller="Book" asp-action="Index" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">📚</span>
+            <span>Total Books &amp; Details</span>
+        </a>
+
+        <a asp-controller="Book" asp-action="Available" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">✅</span>
+            <span>Available Books</span>
+        </a>
+
+        <a asp-controller="BookIssue" asp-action="Index" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">📇</span>
+            <span>Issued Books</span>
+        </a>
+
+        <a asp-controller="BookIssue" asp-action="Recent" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">🔁</span>
+            <span>Recent Issues &amp; Returns</span>
+        </a>
+
+        <a asp-controller="Admin" asp-action="Reservations" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">🔖</span>
+            <span>Reservations</span>
+        </a>
+    </div>
+
+    <div class="sidebar-section-title">User Management</div>
+    <div class="list-group list-group-flush">
+        <a asp-controller="Librarian" asp-action="Index" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">👥</span>
+            <span>Total Librarians</span>
+        </a>
+
+        <a asp-controller="Student" asp-action="Add" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">➕</span>
+            <span>New Student</span>
+        </a>
+
+        <a asp-controller="Student" asp-action="Index" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">📋</span>
+            <span>Student Details</span>
+        </a>
+    </div>
+
+    <div class="sidebar-section-title">Other</div>
+    <div class="list-group list-group-flush">
+        <a asp-controller="Admin" asp-action="Notifications" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
+
+        <a asp-controller="Admin" asp-action="SendNotification" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">📢</span>
+            <span>Send Notification</span>
+        </a>
+
+        <a asp-controller="Fine" asp-action="Index" class="sidebar-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+            <span class="nav-icon">⏳</span>
+            <span>Pending Books / Fines</span>
+        </a>
+    </div>
+
+</nav>
+
+<!-- Sidebar Footer -->
+<div class="sidebar-footer">
+    <a asp-controller="Auth" asp-action="Logout" class="sidebar-link logout-link list-group-item list-group-item-action border-0 d-flex align-items-center gap-3">
+        <span class="nav-icon">🚪</span>
+        <span>Logout</span>
+    </a>
+</div>
+
+<style>
+    /*
+                Apply this background color to your sidebar container:
+                background: linear-gradient(180deg, #173c35 0%, #102b26 100%);
+            */
+
+    .sidebar-brand {
+        border-bottom: 1px solid rgba(255, 255, 255, .1);
+        padding: 1.3rem 1.15rem;
+    }
+
+    .brand-icon {
+        align-items: center;
+        background: linear-gradient(135deg, #f2c66d, #dca53c);
+        border-radius: .8rem;
+        box-shadow: 0 .35rem .8rem rgba(0, 0, 0, .18);
+        display: inline-flex;
+        font-size: 1.35rem;
+        height: 46px;
+        justify-content: center;
+        width: 46px;
+    }
+
+    .brand-title {
+        color: #ffffff;
+        font-size: .98rem;
+        font-weight: 800;
+        letter-spacing: -.015em;
+    }
+
+    .brand-subtitle {
+        color: #b9d4c8;
+        font-size: .72rem;
+        margin-top: .12rem;
+    }
+
+    .sidebar-navigation {
+        padding: .8rem .7rem 1.25rem;
+    }
+
+    .sidebar-section-title {
+        color: #91b6a6;
+        font-size: .66rem;
+        font-weight: 800;
+        letter-spacing: .11em;
+        padding: 1.15rem .7rem .5rem;
+        text-transform: uppercase;
+    }
+
+    .sidebar-link {
+        align-items: center;
+        background: transparent !important;
+        border-radius: .65rem !important;
+        color: #dcebe4 !important;
+        font-size: .86rem;
+        font-weight: 600;
+        margin-bottom: .16rem;
+        min-height: 43px;
+        padding: .63rem .7rem;
+        transition: background .2s ease, color .2s ease, transform .2s ease;
+    }
+
+        .sidebar-link:hover,
+        .sidebar-link:focus {
+            background: rgba(102, 181, 139, .18) !important;
+            color: #ffffff !important;
+            transform: translateX(3px);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(90deg, #25825f, #319a70) !important;
+            box-shadow: 0 .4rem .9rem rgba(0, 0, 0, .16);
+            color: #ffffff !important;
+        }
+
+    .nav-icon {
+        align-items: center;
+        background: rgba(255, 255, 255, .08);
+        border-radius: .5rem;
+        display: inline-flex;
+        flex: 0 0 30px;
+        font-size: .95rem;
+        height: 30px;
+        justify-content: center;
+        width: 30px;
+    }
+
+    .sidebar-link:hover .nav-icon,
+    .sidebar-link.active .nav-icon {
+        background: rgba(255, 255, 255, .17);
+    }
+
+    .sidebar-footer {
+        border-top: 1px solid rgba(255, 255, 255, .1);
+        padding: .75rem .7rem;
+    }
+
+    .logout-link {
+        color: #ffb5ab !important;
+    }
+
+        .logout-link:hover {
+            background: rgba(214, 74, 67, .16) !important;
+            color: #ffd5cf !important;
+        }
+</style>

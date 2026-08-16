@@ -1,0 +1,48 @@
+﻿@model List<LibraryInventoryManagementSystem1.Models.BookIssue>
+
+@{
+    ViewData["Title"] = "Recent Book Issues & Returns";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-hero" style="margin-bottom:20px;">
+    <h2>Recent Book Issues & Returns</h2>
+    <p>Recent Records: <strong>@ViewBag.RecentCount</strong></p>
+</div>
+
+<table class="table" style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th>Issue Id</th>
+            <th>Name</th>
+            <th>Book</th>
+            <th>Student ID</th>
+            <th>Issue Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var issue in Model)
+            {
+                <tr>
+                    <td>@issue.IssueId</td>
+                    <!-- Shows the student's actual name -->
+                    <td>@issue.Student!.Name</td>
+                    <td>@issue.Book!.Title</td>
+                    <!-- Shows the real Student ID (e.g. STU-2026-0061) -->
+                    <td>@issue.Student!.StudentCode</td>
+                    <td>@issue.IssueDate.ToString("dd-MMM-yyyy HH:mm")</td>
+                    <td>@(issue.ReturnDate.HasValue ? issue.ReturnDate.Value.ToString("dd-MMM-yyyy HH:mm") : "-")</td>
+                    <td>@issue.Status</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="7">No recent activity.</td></tr>
+        }
+    </tbody>
+</table>

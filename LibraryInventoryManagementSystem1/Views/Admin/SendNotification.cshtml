@@ -1,0 +1,171 @@
+﻿@model LibraryInventoryManagementSystem1.Dto.SendNotificationDto
+@{
+    ViewData["Title"] = "Send Notification";
+    Layout = "_AdminLayout";
+    var students = ViewBag.Students as List<LibraryInventoryManagementSystem1.Models.Student>;
+}
+
+<style>
+    .send-notif {
+        --primary: #4338ca;
+        --primary-dark: #3730a3;
+        --primary-light: #eef0fd;
+        --accent: #f59e0b;
+        --navy: #1e1b3a;
+        --muted: #6b7280;
+        --border: #e7e5f0;
+        max-width: 640px;
+    }
+
+        .send-notif .panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 .35rem 1.2rem rgba(30, 27, 58, .05);
+            padding: 1.5rem;
+        }
+
+        .send-notif .page-title {
+            color: var(--navy);
+            font-weight: 800;
+            letter-spacing: -.03em;
+        }
+
+        .send-notif .page-subtitle {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .send-notif label {
+            color: var(--navy);
+            font-weight: 700;
+            font-size: .85rem;
+            margin-bottom: .35rem;
+        }
+
+        .send-notif .form-control,
+        .send-notif .form-select {
+            border: 1px solid var(--border);
+            border-radius: .6rem;
+            padding: .6rem .85rem;
+        }
+
+            .send-notif .form-control:focus,
+            .send-notif .form-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 .2rem rgba(67, 56, 202, .15);
+            }
+
+        .send-notif .audience-toggle {
+            background: var(--primary-light);
+            border-radius: .75rem;
+            padding: .9rem 1rem;
+        }
+
+        .send-notif .btn-send {
+            background: var(--primary);
+            border: 0;
+            border-radius: .7rem;
+            color: #fff;
+            font-weight: 700;
+            padding: .7rem 1.4rem;
+            transition: .2s ease;
+        }
+
+            .send-notif .btn-send:hover {
+                background: var(--primary-dark);
+                color: #fff;
+            }
+</style>
+
+<div class="send-notif">
+    <div class="mb-4">
+        <h1 class="h4 page-title mb-1">Send Notification</h1>
+        <p class="page-subtitle mb-0">Share an announcement, reminder, or update with your students.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="panel">
+        <form asp-controller="Admin" asp-action="SendNotification" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="audience-toggle mb-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="audience" id="audienceOne" value="one" checked>
+                    <label class="form-check-label fw-semibold" for="audienceOne" style="margin-bottom:0;">
+                        Send to a specific student
+                    </label>
+                </div>
+                <select asp-for="StudentId" id="studentSelect" class="form-select mb-3">
+                    <option value="">-- Select a student --</option>
+                    @if (students != null)
+                    {
+                        @foreach (var s in students)
+                        {
+                            <option value="@s.Id">@s.Name (@s.StudentCode)</option>
+                        }
+                    }
+                </select>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="audience" id="audienceAll" value="all">
+                    <label class="form-check-label fw-semibold" for="audienceAll" style="margin-bottom:0;">
+                        Send to all students
+                    </label>
+                </div>
+                <input type="hidden" asp-for="SendToAll" id="sendToAllInput" value="false" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Title">Title</label>
+                <input asp-for="Title" class="form-control" placeholder="e.g. Library closed on Friday" maxlength="120" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Type">Type</label>
+                <select asp-for="Type" class="form-select">
+                    <option value="Announcement">Announcement</option>
+                    <option value="DueReminder">Due Reminder</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Reservation">Reservation</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Message">Message</label>
+                <textarea asp-for="Message" class="form-control" rows="5" maxlength="1000" placeholder="Write the full details here..."></textarea>
+                <span asp-validation-for="Message" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-send">Send Notification</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const audienceOne = document.getElementById('audienceOne');
+        const audienceAll = document.getElementById('audienceAll');
+        const studentSelect = document.getElementById('studentSelect');
+        const sendToAllInput = document.getElementById('sendToAllInput');
+
+        function syncAudience() {
+            const isAll = audienceAll.checked;
+            sendToAllInput.value = isAll ? 'true' : 'false';
+            studentSelect.disabled = isAll;
+            if (isAll) {
+                studentSelect.value = '';
+            }
+        }
+
+        audienceOne.addEventListener('change', syncAudience);
+        audienceAll.addEventListener('change', syncAudience);
+        syncAudience();
+    })();
+</script>
