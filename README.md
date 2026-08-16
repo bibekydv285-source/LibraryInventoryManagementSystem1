@@ -44,7 +44,7 @@ This system digitizes day-to-day library operations across three role-based port
 ### 👨‍💼 Admin Portal
 - 📊 Dashboard with system-wide overview (strongly-typed ViewModels)
 - 🔔 Real-time bell-icon notification system with unread count
-- 📥 Manage notifications — mark as read, archive
+- 📥 Manage notifications mark as read, archive
 - 📤 Send notifications to users
 - 📅 Manage reservations
 
@@ -76,7 +76,7 @@ This system digitizes day-to-day library operations across three role-based port
 | Database | SQL Server (LocalDB) |
 | ORM | Entity Framework Core |
 | Email | MailKit (Gmail SMTP) |
-| Auth | Session-based authentication |
+| Auth | Session based authentication |
 | Frontend | Razor Views, Bootstrap, CSS |
 | IDE | Visual Studio 2022 |
 
@@ -255,7 +255,7 @@ LibraryInventoryManagementSystem1/
 
 ### 🧪 Default Admin Login (Local Development Only)
 
-> 🚨 **Do not commit real credentials to a public README.** The values below are placeholders — see [`SEED_ADMIN.md`](./SEED_ADMIN.md) (git-ignored) for your actual local login. If this repo is or will be public on GitHub, rotate any credentials that were ever pushed, since scrapers index public commits within minutes.
+> 🚨 **Do not commit real credentials to a public README.** The values below are placeholders see [`SEED_ADMIN.md`](./SEED_ADMIN.md) (git-ignored) for your actual local login. If this repo is or will be public on GitHub, rotate any credentials that were ever pushed, since scrapers index public commits within minutes.
 
 | Field | Value |
 |---|---|
