@@ -1,6 +1,6 @@
 # 📚 Library Inventory Management System
 
-A full-featured **Library Inventory Management System** built with **ASP.NET Core MVC (.NET)**, featuring role-based portals for **Admins, Librarians, and Students** — covering book inventory, borrowing/issuing, fines, reservations, real-time notifications, and secure email-based password recovery.
+A full-featured **Library Inventory Management System** built with **ASP.NET Core MVC (.NET)**, featuring role-based portals for **Admins, Librarians, and Students** covering book inventory, borrowing/issuing, fines, reservations, real-time notifications, and secure email-based password recovery.
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet" />
