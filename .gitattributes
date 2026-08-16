@@ -61,3 +61,13 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# ============================
+# Exclude Razor Views & static assets from GitHub language stats
+# ============================
+LibraryInventoryManagementSystem1/Views/**/*.cshtml linguist-vendored
+LibraryInventoryManagementSystem1/wwwroot/** linguist-vendored
+LibraryInventoryManagementSystem1/wwwroot/lib/** linguist-vendored
+LibraryInventoryManagementSystem1/wwwroot/css/** linguist-vendored
+LibraryInventoryManagementSystem1/wwwroot/js/** linguist-vendored
+LibraryInventoryManagementSystem1/Views/Shared/**/*.cshtml linguist-vendored
