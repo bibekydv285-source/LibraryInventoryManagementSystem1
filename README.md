@@ -78,7 +78,7 @@ This system digitizes day-to-day library operations across three role-based port
 | Email | MailKit (Gmail SMTP) |
 | Auth | Session based authentication |
 | Frontend | Razor Views, Bootstrap, CSS |
-| IDE | Visual Studio 2022 |
+| IDE | Visual Studio 2026 |
 
 ---
 
