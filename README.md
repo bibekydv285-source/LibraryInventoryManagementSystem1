@@ -259,8 +259,8 @@ LibraryInventoryManagementSystem1/
 
 | Field | Value |
 |---|---|
-| Username | `admin@example.com` |
-| Password | `changeme` |
+| Username | `Bibekydv285@gmail.com` |
+| Password | `9763244805` |
 | Role | `Admin` |
 
 **Before deploying or pushing publicly:**
