@@ -33,7 +33,7 @@ This system digitizes day-to-day library operations across three role-based port
 
 | Role | Purpose |
 |---|---|
-| **Admin** | Oversees the system — dashboard analytics, notifications, and reservation management |
+| **Admin** | Oversees the system  dashboard analytics, notifications, and reservation management |
 | **Librarian** | Manages book inventory and issues/records student borrowing activity |
 | **Student** | Browses books, borrows/returns, tracks fines, and manages their profile |
 
