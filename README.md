@@ -372,6 +372,7 @@ This project is for educational purposes. Add a license (e.g., MIT) if you plan 
 
 ## 🙋 Author
 
-Built by **Bibek Yadav** — BSc (Hons) Cyber Security student, ISMT College (University of Sunderland) — as part of an ongoing full-stack ASP.NET Core MVC learning project.
+Built by **Bibek Yadav**  BSc (Hons) COMPUTER SYSTEMS ENGINEERING
+(BSc. IT) student, ISMT College (University of Sunderland) as part of an ongoing full-stack ASP.NET Core MVC learning project.
 
 🔗 [bibek-yadav.com.np](https://bibek-yadav.com.np) · GitHub: [@bibekydv285-source](https://github.com/bibekydv285-source)
